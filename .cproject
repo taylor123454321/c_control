@@ -72,7 +72,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Stepper.cpp|uart_echo.c|uart.c|timers.c|ustdlib.c|uartstdio.c|softuart.c|Adafruit_GPS/Adafruit-GPS-Library-master/Adafruit_GPS.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="gpio.c|Stepper.cpp|uart_echo.c|uart.c|timers.c|ustdlib.c|uartstdio.c|softuart.c|Adafruit_GPS/Adafruit-GPS-Library-master/Adafruit_GPS.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
