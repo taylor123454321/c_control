@@ -5,12 +5,19 @@
  *      Author: Ryan Taylor
  */
 
-
+#include "inc/hw_types.h"
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include "inc/hw_gpio.h"
 #include "inc/hw_memmap.h"
+#include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
 #include "driverlib/systick.h"
 #include "driverlib/timer.h"
+#include "driverlib/interrupt.h"
+
+
 
 
 
@@ -19,7 +26,7 @@
 #define MAX_24BIT_VAL 0X0FFFFFF
 
 
-int last_time = 0;
+int time_last = 0;
 int thisStep = 0;
 
 
@@ -106,16 +113,16 @@ int step(float time_step){
 		time_step = -1*time_step;
 	}
 
-	if (current_time <= last_time){
-		diff = last_time - current_time;
+	if (current_time <= time_last){
+		diff = time_last - current_time;
 	}
 	else {
-		diff = (last_time + MAX_24BIT_VAL) - current_time;
+		diff = (time_last + MAX_24BIT_VAL) - current_time;
 	}
 	if(diff > (time_step*10000000)){
 
 		stepper_motor(direction);
-		last_time = current_time;
+		time_last = current_time;
 	}
 	return current_time;
 }
@@ -134,3 +141,6 @@ float step_motor_control(int encoder, int aim_pos){
 void Timer1IntHandler(void){
 	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 }
+
+
+
