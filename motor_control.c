@@ -24,6 +24,7 @@
 #define GPIOHigh(x) GPIOPinWrite(GPIO_PORTF_BASE, x, x)//GPIO_PIN_1
 #define GPIOLow(x) GPIOPinWrite(GPIO_PORTF_BASE, x, 0)
 #define MAX_24BIT_VAL 0X0FFFFFF
+#define FACTOR 1000000
 
 
 int time_last = 0;
@@ -108,10 +109,11 @@ int step(float time_step){
 	int diff = 0;
 	int direction = 0;
 
-	if (time_step < 0){
+	if (time_step > 0){
 		direction = 1;
 		time_step = -1*time_step;
 	}
+	//time_step = -1*time_step;
 
 	if (current_time <= time_last){
 		diff = time_last - current_time;
@@ -119,7 +121,7 @@ int step(float time_step){
 	else {
 		diff = (time_last + MAX_24BIT_VAL) - current_time;
 	}
-	if(diff > (time_step*10000000)){
+	if(diff > (time_step*FACTOR)){// && time_step < 1){
 
 		stepper_motor(direction);
 		time_last = current_time;
@@ -130,8 +132,8 @@ int step(float time_step){
 float step_motor_control(int encoder, int aim_pos){
 	int error = 0;
 	float time_step = 0;
-	error = encoder - aim_pos;
-	time_step = 1*error;
+	error = aim_pos - encoder;
+	time_step = 2*error;
 	time_step = stepper_system(time_step);
 	step(time_step);
 

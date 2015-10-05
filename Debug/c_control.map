@@ -1,7 +1,7 @@
 ******************************************************************************
                   TI ARM Linker PC v5.1.1                      
 ******************************************************************************
->> Linked Mon Oct 05 16:17:36 2015
+>> Linked Mon Oct 05 16:36:34 2015
 
 OUTPUT FILE NAME:   <c_control.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 000061bd
@@ -309,7 +309,7 @@ UNDEFED    SHT$$INIT_ARRAY$$Limit
 00006525   SysTickPeriodSet
 00006585   SysTickValueGet
 00001919   Timer0IntHandler
-00003c6b   Timer1IntHandler
+00003c6d   Timer1IntHandler
 00006375   TimerConfigure
 00006535   TimerEnable
 0000662d   TimerIntClear
@@ -618,7 +618,7 @@ address    name
 00003b95   stepper_system
 00003bb5   step
 00003c31   step_motor_control
-00003c6b   Timer1IntHandler
+00003c6d   Timer1IntHandler
 00003c99   strtod
 00003ed1   tan
 00004109   reset_peripheral

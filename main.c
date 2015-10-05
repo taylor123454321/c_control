@@ -274,7 +274,7 @@ void main(void) {
 		speed = read_speed();									//read data into variables
 		//read encoder
 		error = step_motor_control(encoder_1/40, aim_pos);
-		//stepper_motor(0);
+
 
 		//storing data
 		store_speed(speed);
