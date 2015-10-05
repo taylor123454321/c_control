@@ -21,8 +21,8 @@
 
 
 
-#define GPIOHigh(x) GPIOPinWrite(GPIO_PORTA_BASE, x, x)//GPIO_PIN_1
-#define GPIOLow(x) GPIOPinWrite(GPIO_PORTA_BASE, x, 0)
+#define GPIOHigh(x) GPIOPinWrite(GPIO_PORTF_BASE, x, x)//GPIO_PIN_1
+#define GPIOLow(x) GPIOPinWrite(GPIO_PORTF_BASE, x, 0)
 #define MAX_24BIT_VAL 0X0FFFFFF
 
 

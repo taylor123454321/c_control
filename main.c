@@ -273,7 +273,8 @@ void main(void) {
 		read_data = split_data(UART_char_data_old, read_data); 	// decode data
 		speed = read_speed();									//read data into variables
 		//read encoder
-		error = step_motor_control(encoder_1, aim_pos);
+		error = step_motor_control(encoder_1/40, aim_pos);
+		//stepper_motor(0);
 
 		//storing data
 		store_speed(speed);
