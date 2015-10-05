@@ -5,14 +5,22 @@
  *      Author: Ryan Taylor
  */
 
+
+#include "inc/hw_gpio.h"
+#include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
+#include "driverlib/systick.h"
+#include "driverlib/timer.h"
+
 
 
 #define GPIOHigh(x) GPIOPinWrite(GPIO_PORTA_BASE, x, x)//GPIO_PIN_1
 #define GPIOLow(x) GPIOPinWrite(GPIO_PORTA_BASE, x, 0)
+#define MAX_24BIT_VAL 0X0FFFFFF
 
 
-
+int last_time = 0;
+int thisStep = 0;
 
 
 void stepper_motor(int direction){
@@ -70,10 +78,8 @@ void stepper_motor(int direction){
 
 
 int step_mode_return(void){
-
+	return thisStep;
 }
-
-
 
 void stepper_motor_off(void){
 	GPIOHigh(GPIO_PIN_1);
@@ -82,33 +88,49 @@ void stepper_motor_off(void){
 	GPIOHigh(GPIO_PIN_4);
 }
 
-float stepper_system(float time_step);
+float stepper_system(float time_step){
+	float time = 0;
+	if (time_step != 0){
+		time = 1/time_step;
+	}
+	return time;
+}
 
-int step(float time_step);
+int step(float time_step){
+	int current_time = SysTickValueGet();
+	int diff = 0;
+	int direction = 0;
 
-float step_motor_control(int encoder, int aim_pos);
+	if (time_step < 0){
+		direction = 1;
+		time_step = -1*time_step;
+	}
 
-void Timer1IntHandler(void);
+	if (current_time <= last_time){
+		diff = last_time - current_time;
+	}
+	else {
+		diff = (last_time + MAX_24BIT_VAL) - current_time;
+	}
+	if(diff > (time_step*10000000)){
 
+		stepper_motor(direction);
+		last_time = current_time;
+	}
+	return current_time;
+}
 
+float step_motor_control(int encoder, int aim_pos){
+	int error = 0;
+	float time_step = 0;
+	error = encoder - aim_pos;
+	time_step = 1*error;
+	time_step = stepper_system(time_step);
+	step(time_step);
 
+	return error;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Timer1IntHandler(void){
+	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+}
