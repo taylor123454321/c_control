@@ -101,6 +101,9 @@ float stepper_system(float time_step){
 	if (time_step != 0){
 		time = 1/time_step;
 	}
+	if ( time_step == 0){
+		time = 0;
+	}
 	return time;
 }
 
@@ -113,7 +116,7 @@ int step(float time_step){
 		direction = 1;
 		time_step = -1*time_step;
 	}
-	//time_step = -1*time_step;
+	time_step = -1*time_step;
 
 	if (current_time <= time_last){
 		diff = time_last - current_time;
