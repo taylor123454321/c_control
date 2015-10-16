@@ -296,7 +296,8 @@ void main(void) {
 
 
 		if (i >= 50){
-			display(screen, buffed_speed, acc, max_acc, speed_set, satillite, encoder_1/40, time, distance, quality, UART_char_data_old, step_mode, error);
+			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
+					encoder_1/40, time, distance, quality, UART_char_data_old, step_mode, error);
 			//stepper_motor();
 			i = 0;
 		}
