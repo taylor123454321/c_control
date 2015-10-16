@@ -246,7 +246,7 @@ void main(void) {
 	float buffed_speed = 0;
 	float acc = 0;
 	float max_acc = 0;
-	int speed_set = 0;
+	int speed_set = 120;
 	//float fuel_eco = 0;
 	float distance = 0;
 
@@ -255,8 +255,8 @@ void main(void) {
 	float quality = 0;
 	clock time;
 	int step_mode = 0;
-	int aim_pos = 300;
-	float error = 0;
+	int aim_pos = 0;
+	int error = 0;
 
 	// i = 0;
 	//while(i >= 100){ i++; }
@@ -271,8 +271,10 @@ void main(void) {
 	while(1){
 		//reading data
 		read_data = split_data(UART_char_data_old, read_data); 	// decode data
-		speed = read_speed();									//read data into variables
-		//read encoder
+		//speed = read_speed();									//read data into variables
+		speed = 100;
+		//calculations
+		aim_pos = speed_feedback(speed, encoder_1/40, speed_set);
 		error = step_motor_control(encoder_1/40, aim_pos);
 
 
@@ -297,8 +299,7 @@ void main(void) {
 
 		if (i >= 50){
 			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
-					encoder_1/40, time, distance, quality, UART_char_data_old, step_mode, error);
-			//stepper_motor();
+					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos);
 			i = 0;
 		}
 		i++;

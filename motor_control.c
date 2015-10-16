@@ -144,7 +144,7 @@ float step_motor_control(int encoder, int aim_pos){
 	time_step = stepper_system(time_step);
 	step(time_step);
 
-	return time_step;
+	return error;
 }
 
 void Timer1IntHandler(void){

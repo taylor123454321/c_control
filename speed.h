@@ -14,10 +14,6 @@ float read_speed(void);
 
 int set_speed(int set_speed);
 
-double toRadians(double degree);
-
-double getDistance(double lat1, double lon1, double lat2, double lon2);
-
-
+int speed_feedback(float speed, int encoder, int set_speed);
 
 #endif
