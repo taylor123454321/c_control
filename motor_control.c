@@ -99,6 +99,9 @@ void stepper_motor_off(void){
 
 float stepper_system(float time_step){
 	float time = 0;
+	if (time_step > 300){
+		time_step = 300;
+	}
 	if (time_step != 0){
 		time = 1/time_step;
 	}
@@ -125,9 +128,7 @@ int step(float time_step){
 	else {
 		diff = (time_last + MAX_24BIT_VAL) - current_time;
 	}
-	if(diff > (time_step*FACTOR)){// && time_step < 1){
-
-
+	if (diff > (time_step*FACTOR) && time_step != 0) {
 
 		stepper_motor(direction);
 		time_last = current_time;
@@ -139,7 +140,7 @@ float step_motor_control(int encoder, int aim_pos){
 	int error = 0;
 	float time_step = 0;
 	error = aim_pos - encoder;
-	time_step = error; //gain
+	time_step = 10*error; //gain
 	time_step = stepper_system(time_step);
 	step(time_step);
 

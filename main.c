@@ -255,7 +255,7 @@ void main(void) {
 	float quality = 0;
 	clock time;
 	int step_mode = 0;
-	int aim_pos = 30;
+	int aim_pos = 300;
 	float error = 0;
 
 	// i = 0;
