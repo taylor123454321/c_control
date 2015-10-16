@@ -111,10 +111,10 @@ float stepper_system(float time_step){
 int step(float time_step){
 	int current_time = SysTickValueGet();
 	int diff = 0;
-	int direction = 1; //0 = clockwise, 1 = anti clockwise
+	int direction = 0; //0 = clockwise, 1 = anti clockwise
 
 	if (time_step < 0){
-		direction = 0;
+		direction = 1;
 		time_step = -1*time_step;
 	}
 	//if time less then 0, change direction
@@ -143,7 +143,7 @@ float step_motor_control(int encoder, int aim_pos){
 	time_step = stepper_system(time_step);
 	step(time_step);
 
-	return error;
+	return time_step;
 }
 
 void Timer1IntHandler(void){
