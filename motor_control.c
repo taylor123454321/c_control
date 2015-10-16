@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 #include "inc/hw_gpio.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
@@ -24,7 +25,7 @@
 #define GPIOHigh(x) GPIOPinWrite(GPIO_PORTF_BASE, x, x)//GPIO_PIN_1
 #define GPIOLow(x) GPIOPinWrite(GPIO_PORTF_BASE, x, 0)
 #define MAX_24BIT_VAL 0X0FFFFFF
-#define FACTOR 1000000
+#define FACTOR 13000000
 
 
 int time_last = 0;
@@ -110,13 +111,13 @@ float stepper_system(float time_step){
 int step(float time_step){
 	int current_time = SysTickValueGet();
 	int diff = 0;
-	int direction = 0;
+	int direction = 1; //0 = clockwise, 1 = anti clockwise
 
-	if (time_step > 0){
-		direction = 1;
+	if (time_step < 0){
+		direction = 0;
 		time_step = -1*time_step;
 	}
-	time_step = -1*time_step;
+	//if time less then 0, change direction
 
 	if (current_time <= time_last){
 		diff = time_last - current_time;
@@ -125,6 +126,8 @@ int step(float time_step){
 		diff = (time_last + MAX_24BIT_VAL) - current_time;
 	}
 	if(diff > (time_step*FACTOR)){// && time_step < 1){
+
+
 
 		stepper_motor(direction);
 		time_last = current_time;
@@ -136,7 +139,7 @@ float step_motor_control(int encoder, int aim_pos){
 	int error = 0;
 	float time_step = 0;
 	error = aim_pos - encoder;
-	time_step = 2*error;
+	time_step = error; //gain
 	time_step = stepper_system(time_step);
 	step(time_step);
 

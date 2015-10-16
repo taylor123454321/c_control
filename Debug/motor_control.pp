@@ -10,6 +10,8 @@ motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdbool.h
 motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h
 motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdarg.h
 motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/_lock.h
+motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/math.h
+motor_control.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/ymath.h
 motor_control.obj: C:/ti/StellarisWare/inc/hw_gpio.h
 motor_control.obj: C:/ti/StellarisWare/inc/hw_memmap.h
 motor_control.obj: C:/ti/StellarisWare/inc/hw_ints.h
@@ -29,6 +31,8 @@ C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdbool.h:
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdarg.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/_lock.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/math.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/ymath.h: 
 C:/ti/StellarisWare/inc/hw_gpio.h: 
 C:/ti/StellarisWare/inc/hw_memmap.h: 
 C:/ti/StellarisWare/inc/hw_ints.h: 
