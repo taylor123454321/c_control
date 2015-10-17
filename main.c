@@ -25,7 +25,7 @@ Written by Ryan Taylor
 #include "debounce.h"
 #include "data_process.h"
 #include "motor_control.h"
-
+#include "driverlib/timer.h"
 
 //*****************************************************************************
 // Constants
@@ -35,6 +35,7 @@ Written by Ryan Taylor
 //GLOBALE VARIABLES
 int encoder_1 = 0;
 int encoder_2 = 0;
+int sending = 0;
 
 int prev_state = 0;
 bool thing = 0;
@@ -191,14 +192,14 @@ void send_data(void){
 	int i = 0;
 	while(i <= 100000){ i++; }
 	i = 0;
-	UARTSend((unsigned char *)PMTK_SET_NMEA_UPDATE_5HZ, 18);
+	UARTSend((unsigned char *)PMTK_SET_NMEA_UPDATE_5HZ, 18, 0);
 
 	while(i <= 100000){ i++; }
 	i = 0;
-	UARTSend((unsigned char *)PMTK_SET_NMEA_OUTPUT_RMCGGA, 53);
+	UARTSend((unsigned char *)PMTK_SET_NMEA_OUTPUT_RMCGGA, 53,0);
 
 	while(i <= 1000000){ i++; }
-	UARTSend((unsigned char *)PGCMD_NOANTENNA, 16);
+	UARTSend((unsigned char *)PGCMD_NOANTENNA, 16,0);
 }
 
 
@@ -224,6 +225,27 @@ float max_acc_func(float acc, float max){
 		return acc;
 	}
 	return max;
+}
+
+void Timer1IntHandler(void){
+	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+	/*sending = 1;
+	UARTSend((unsigned char *)"$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n", 72, 1);
+	char *pucBuffer = "$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n";
+	long count = 72;
+	while(count--) {
+	        //
+	        // Write the next character to the UART.
+	        //
+	    //UARTCharPutNonBlocking(UART0_BASE, *pucBuffer++);
+	    UARTCharPut(UART0_BASE, *pucBuffer++);
+	}*/
+
+}
+
+void send_info(void){
+	UARTSend((unsigned char *)"$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n", 72, 1);
+	sending = 1;
 }
 
 // Main function
@@ -295,13 +317,20 @@ void main(void) {
 		}
 		//calculate_feedback();
 		distance = read_distance();
-
-
-		if (i >= 50){
-			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
-					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos);
+		if (i >= 200){
+			send_info();
 			i = 0;
 		}
+
+		if (i == 50 || i == 100 || i == 150 || i >= 200){
+
+			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
+					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos, sending);
+
+			sending = 0;
+
+		}
+
 		i++;
 	}
 }

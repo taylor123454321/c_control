@@ -150,16 +150,23 @@ void initPWMchan (void) {
 
 }*/
 
-void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount) {
+void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount, int type) {
     //
     // Loop while there are more characters to send.
     //
+	long base = 0;
+	if(type == 0){
+		base = UART0_BASE;
+	}
+	else if(type == 1){
+		base = UART1_BASE;
+	}
     while(ulCount--) {
         //
         // Write the next character to the UART.
         //
-        //UARTCharPutNonBlocking(UART0_BASE, *pucBuffer++);
-    	UARTCharPut(UART0_BASE, *pucBuffer++);
+        //UARTCharPutNonBlocking(base, *pucBuffer++);
+    	UARTCharPut(base, *pucBuffer++);
     }
 }
 
@@ -170,8 +177,11 @@ void initConsole (void) {
 	//
 	// Enable GPIO port A which is used for UART0 pins.
 	//
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);// normal
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);// extra
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     //
     // Enable processor interrupts.
     //
@@ -179,21 +189,28 @@ void initConsole (void) {
 	//
 	// Select the alternate (UART) function for these pins.
 	//
-	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);//normal
+	GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1);//extra
 	//
 	UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(),
 			BAUD_RATE, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-			UART_CONFIG_PAR_NONE));
+			UART_CONFIG_PAR_NONE));//normal
+
+	UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(),
+				BAUD_RATE, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+				UART_CONFIG_PAR_NONE));//extra
     //
     // Enable the UART interrupt.
     //
     IntEnable(INT_UART0);
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
 
+    //IntEnable(INT_UART1);
+    //UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);
 
 	//
-	//UARTFIFOEnable(UART0_BASE);
-	//UARTEnable(UART0_BASE);
+	UARTFIFOEnable(UART1_BASE);
+	UARTEnable(UART1_BASE);
 
 }
 
@@ -213,7 +230,7 @@ void initTimer(void){
 	TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
 	TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC);
 	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
-	TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/2);
+	TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet());
 	//
 	// Setup the interrupts for the timer timeouts.
 	//

@@ -15,7 +15,6 @@
 #include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
 #include "driverlib/systick.h"
-#include "driverlib/timer.h"
 #include "driverlib/interrupt.h"
 
 
@@ -147,9 +146,7 @@ float step_motor_control(int encoder, int aim_pos){
 	return error;
 }
 
-void Timer1IntHandler(void){
-	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-}
+
 
 
 
