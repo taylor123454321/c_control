@@ -10,6 +10,9 @@ main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdarg.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/_lock.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/string.h
+main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/math.h
+main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/ymath.h
+main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdlib.h
 main.obj: ../speed.h
 main.obj: ../rit128x96x4.h
 main.obj: ../display.h
@@ -26,6 +29,7 @@ main.obj: ../debounce.h
 main.obj: ../data_process.h
 main.obj: C:/ti/StellarisWare/driverlib/timer.h
 main.obj: ../motor_control.h
+main.obj: C:/ti/StellarisWare/driverlib/systick.h
 
 ../main.c: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdio.h: 
@@ -37,6 +41,9 @@ C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h:
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdarg.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/_lock.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/string.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/math.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/ymath.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdlib.h: 
 ../speed.h: 
 ../rit128x96x4.h: 
 ../display.h: 
@@ -53,3 +60,4 @@ C:/ti/StellarisWare/driverlib/interrupt.h:
 ../data_process.h: 
 C:/ti/StellarisWare/driverlib/timer.h: 
 ../motor_control.h: 
+C:/ti/StellarisWare/driverlib/systick.h: 

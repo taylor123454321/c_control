@@ -25,10 +25,10 @@ void enter_fuel_display(void);
 
 void review_fuel_display(void);
 
-void no_fix_screen(clock time, uint8_t satellite, int encoder, int aim_pos, char * stuff, int sending);
+void no_fix_screen(clock time, uint8_t satellite, int encoder, int aim_pos);
 
 void display(int screen, float speed, float acc, float max_acc, int speed_set, uint8_t satellite,
-		int encoder_3, clock time, float distance, float quality, char * stuff, int aim_pos, int sending);
+		int encoder_3, clock time, float distance, float quality, char * stuff, int aim_pos);
 
 
 #endif /* DISPLAY_H_ */

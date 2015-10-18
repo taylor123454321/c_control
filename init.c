@@ -190,7 +190,7 @@ void initConsole (void) {
 	// Select the alternate (UART) function for these pins.
 	//
 	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);//normal
-	GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1);//extra
+	GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3);//extra
 	//
 	UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(),
 			BAUD_RATE, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |

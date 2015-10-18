@@ -12,6 +12,8 @@ Written by Ryan Taylor
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
+#include <stdlib.h>
 #include "speed.h"
 #include "rit128x96x4.h"
 #include "display.h"
@@ -25,19 +27,22 @@ Written by Ryan Taylor
 #include "debounce.h"
 #include "data_process.h"
 #include "motor_control.h"
+#include "driverlib/systick.h"
 #include "driverlib/timer.h"
 
 //*****************************************************************************
 // Constants
 //*****************************************************************************
 #define BUF_SIZE 8
+#define MAX_24BIT_VAL 0X0FFFFFF
+//#define RAND_MAX 300
 
 //GLOBALE VARIABLES
 int encoder_1 = 0;
 int encoder_2 = 0;
-int sending = 0;
 
 int prev_state = 0;
+long time_last_2 = 0;
 bool thing = 0;
 
 static circBuf_t speed_buffer; // Buffer
@@ -227,25 +232,48 @@ float max_acc_func(float acc, float max){
 	return max;
 }
 
-void Timer1IntHandler(void){
-	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-	/*sending = 1;
-	UARTSend((unsigned char *)"$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n", 72, 1);
-	char *pucBuffer = "$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n";
-	long count = 72;
-	while(count--) {
-	        //
-	        // Write the next character to the UART.
-	        //
-	    //UARTCharPutNonBlocking(UART0_BASE, *pucBuffer++);
-	    UARTCharPut(UART0_BASE, *pucBuffer++);
-	}*/
+// Assumes 0 <= max <= RAND_MAX
+// Returns in the half-open interval [0, max]
+long random_at_most(long max) {
+	unsigned long
+    	// max <= RAND_MAX < ULONG_MAX, so this is okay.
+    	num_bins = (unsigned long) max + 1,
+    	num_rand = (unsigned long) RAND_MAX + 1,
+    	bin_size = num_rand / num_bins,
+    	defect   = num_rand % num_bins;
 
+	long x;
+	do {
+		x = rand();
+	}
+	// This is carefully written not to overflow
+	while (num_rand - defect <= (unsigned long)x);
+
+	// Truncated division is intentional
+	return x/bin_size;
 }
 
-void send_info(void){
-	UARTSend((unsigned char *)"$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77\n", 72, 1);
-	sending = 1;
+void send_info(int fake_speed){// in knots
+	long current_time = SysTickValueGet();
+	long diff = 0;
+	char buf[90];
+
+	if (current_time <= time_last_2){
+		diff = time_last_2 - current_time;
+	}
+	else {
+		diff = (time_last_2 + MAX_24BIT_VAL) - current_time;
+	}
+	if (diff > 10000000) {
+		sprintf(buf, "$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,%d,221.11,160412,,,A*77\n", fake_speed);
+		UARTSend((unsigned char *)buf, 85, 1);
+		time_last_2 = current_time;
+	}
+}
+
+void Timer1IntHandler(void){
+	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+
 }
 
 // Main function
@@ -266,9 +294,10 @@ void main(void) {
 	int screen = 0;
 	float speed = 0;
 	float buffed_speed = 0;
+	int fake_speed = 0;
 	float acc = 0;
 	float max_acc = 0;
-	int speed_set = 120;
+	int speed_set = 0;
 	//float fuel_eco = 0;
 	float distance = 0;
 
@@ -276,7 +305,6 @@ void main(void) {
 	uint8_t satillite = 0;
 	float quality = 0;
 	clock time;
-	int step_mode = 0;
 	int aim_pos = 0;
 	int error = 0;
 
@@ -293,13 +321,13 @@ void main(void) {
 	while(1){
 		//reading data
 		read_data = split_data(UART_char_data_old, read_data); 	// decode data
-		//speed = read_speed();									//read data into variables
-		speed = 100;
+		speed = read_speed();									//read data into variables
 		//calculations
-		aim_pos = speed_feedback(speed, encoder_1/40, speed_set);
+		aim_pos = speed_feedback(buffed_speed, encoder_1/40, speed_set);
 		error = step_motor_control(encoder_1/40, aim_pos);
 
-
+		fake_speed = random_at_most(100/1.852);
+		send_info(fake_speed);//knots
 		//storing data
 		store_speed(speed);
 		buffed_speed = analysis_speed();
@@ -309,7 +337,6 @@ void main(void) {
 		satillite = read_satillite();
 		fix = read_fix();
 		quality = read_quality();
-		step_mode = step_mode_return();
 		debounce_button();										// debounce buttons
 		screen = read_button_screen(screen, fix);
 		if (screen == 1){
@@ -317,18 +344,12 @@ void main(void) {
 		}
 		//calculate_feedback();
 		distance = read_distance();
-		if (i >= 200){
-			send_info();
-			i = 0;
-		}
 
-		if (i == 50 || i == 100 || i == 150 || i >= 200){
-
+		if (i >= 50){
 			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
-					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos, sending);
+					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos);
 
-			sending = 0;
-
+			i = 0;
 		}
 
 		i++;
