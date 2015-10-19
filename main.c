@@ -229,6 +229,9 @@ void send_data(void){
 
 // This function stores the altitude in a buffer "speed_buffer" for analysis later
 void store_speed(float single_speed){
+	if (single_speed > 150 ){
+		single_speed = 150;
+	}
 	speed_buffer.data[speed_buffer.windex] = single_speed;
 	speed_buffer.windex ++;
 	if (speed_buffer.windex >= speed_buffer.size){
@@ -253,7 +256,7 @@ float max_acc_func(float acc, float max){
 
 // Assumes 0 <= max <= RAND_MAX
 // Returns in the half-open interval [0, max]
-long random_at_most(long max) {
+/*long random_at_most(long max) {
 	unsigned long
     	// max <= RAND_MAX < ULONG_MAX, so this is okay.
     	num_bins = (unsigned long) max + 1,
@@ -270,7 +273,7 @@ long random_at_most(long max) {
 
 	// Truncated division is intentional
 	return x/bin_size;
-}
+}*/
 
 void send_info(int fake_speed){// in knots
 	long current_time = SysTickValueGet();
@@ -330,6 +333,7 @@ void main(void) {
 	init_set_speed_data(&speed_set_data);
 
 	int screen = 0;
+	int screen_prev = 0;
 	float speed = 0;
 	float buffed_speed = 0;
 	int fake_speed = 0;
@@ -377,9 +381,11 @@ void main(void) {
 		debounce_button();										// debounce buttons
 		screen = read_button_screen(screen, fix);
 		distance = read_distance();
-		select_read();
+		select_read();											//need a mosfet for turning power off
+																// select adds a an on and off switch yo
+
 		if (screen == 1){
-			if(init_set_speed() == 0){
+			if(screen_prev != 1 && screen == 1){
 				speed_set_data.speed = buffed_speed;
 			}
 			speed_set_data.speed = set_speed(speed_set_data.speed);					// set the speed to cruise at
@@ -392,7 +398,7 @@ void main(void) {
 
 			i = 0;
 		}
-
+		screen_prev = screen;
 		i++;
 	}
 }

@@ -54,11 +54,27 @@ int set_speed(int set_speed){
 	}
 
 	if (up == 1 && set_speed < 140 && flag1 == 1){
-		set_speed ++;
+		if (set_speed > 130){// over 130 it will be capped
+			set_speed = 130;
+		}
+		else if (set_speed < 50){// less then 50 is capped
+			set_speed = 50;
+		}
+		else{
+			set_speed ++;
+		}
 		flag1 = 0;
 	}
 	else if(down == 1 && set_speed > 0 && flag1 == 1){
-		set_speed --;
+		if (set_speed < 50){// less then 50 is capped
+			set_speed = 50;
+		}
+		else if (set_speed > 130){// over 130 it will be capped
+			set_speed = 130;
+		}
+		else {
+			set_speed --;
+		}
 		flag1 = 0;
 		if (set_speed == 99){
 			clearDisplay();
