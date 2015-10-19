@@ -21,6 +21,7 @@
 #define PI 3.14159265358979323846
 
 bool flag1;
+bool flag2;
 
 /*char uart_reading(void){
 	char string = 0;
@@ -48,6 +49,10 @@ int set_speed(int set_speed){
 	//bool right = button_data & (1 << 3);
 	//bool select = button_data & (1 << 4);
 
+	if(flag2 == 0){
+		flag2 = 1;
+	}
+
 	if (up == 1 && set_speed < 140 && flag1 == 1){
 		set_speed ++;
 		flag1 = 0;
@@ -63,6 +68,10 @@ int set_speed(int set_speed){
 		flag1 = 1;
 	}
 	return set_speed;
+}
+
+bool init_set_speed(void){
+	return flag2;
 }
 
 

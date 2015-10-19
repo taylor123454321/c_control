@@ -14,6 +14,8 @@ float read_speed(void);
 
 int set_speed(int set_speed);
 
+bool init_set_speed(void);
+
 int speed_feedback(float speed, int encoder, int set_speed);
 
 #endif

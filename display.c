@@ -134,7 +134,7 @@ void no_fix_screen(clock time, uint8_t satellite, int encoder, int aim_pos){
 
 
 void display(int screen, float speed, float acc, float max_acc, int speed_set, uint8_t satellite,
-		int encoder, clock time, float distance, float quality, char * stuff, int aim_pos){
+		int encoder, clock time, float distance, float quality, char * stuff, int aim_pos, unsigned long adc){
 	if (screen == 1){
 		set_speed_display(speed_set);
 	}
@@ -153,7 +153,8 @@ void display(int screen, float speed, float acc, float max_acc, int speed_set, u
 		sprintf(stringB, "Acc %.1f Max %.1f   ", acc, max_acc);
 		sprintf(stringC, "Set speed %d", speed_set);
 		sprintf(stringD, "Satellites %d ", satellite);
-		sprintf(stringE, "Quality %.2f ", quality);
+		//sprintf(stringE, "Quality %.2f ", quality);
+		sprintf(stringE, "ADC %d    ", adc);
 		//sprintf(stringF, "  ");
 		sprintf(stringG, "Distance  %.2f   ", distance);
 		RIT128x96x4StringDraw (stringA, 6, 12, 15);

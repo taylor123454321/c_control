@@ -5,12 +5,13 @@
  *      Author: Ryan Taylor
  */
 
+#include <stdbool.h>
 #include "init.h"
 #include "inc/hw_types.h"
 #include "inc/hw_ints.h"
 #include "inc/hw_gpio.h"
 #include "inc/hw_uart.h"
-//#include "driverlib/adc.h"
+#include "driverlib/adc.h"
 //#include "driverlib/pwm.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
@@ -105,7 +106,7 @@ void initDisplay (void) {
 }
 
 // Intialise ADC with all the set up conditions for ADC0
-/*void initADC(void){
+void initADC(void){
 	  SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 	  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
 	  GPIOPinTypeADC(GPIO_PORTB_BASE, GPIO_PIN_1);
@@ -116,7 +117,7 @@ void initDisplay (void) {
 }
 
 // Initlise the PWM for pin PWM4. This sets up the period and frequecy also.
-void initPWMchan (void) {
+/*void initPWMchan (void) {
 	period = SysCtlClockGet () / PWM_DIVIDER / PWM4_RATE_HZ;
 
     SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOF);
@@ -261,4 +262,7 @@ float * initCircBuf (circBuf_t *buffer, unsigned int size) {
 	return buffer->data;
 }
 
-
+void init_set_speed_data(cruise_data *data){
+	data->speed = 0;
+	data->enable = 0;
+}

@@ -9,6 +9,7 @@
 #define INIT_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 // *******************************************************
 // Contstants
@@ -46,7 +47,7 @@ void initPin (void);
 void initDisplay (void);
 
 // Intialise ADC with all the set up conditions for ADC0
-//void initADC(void);
+void initADC(void);
 
 // Initlise the PWM for pin PWM4. This sets up the period and frequecy also.
 //void initPWMchan (void);
@@ -74,7 +75,10 @@ typedef struct{
 	int32_t latitude_s;
 }long_lat;
 
-
+typedef struct {
+	int speed;
+	bool enable;
+}cruise_data;
 
 //*****************************************************************************
 // Buffer type declaration - set of unsigned longs
@@ -96,7 +100,7 @@ typedef struct {
 // *******************************************************
 float * initCircBuf (circBuf_t *buffer, unsigned int size);
 
-
+void init_set_speed_data(cruise_data *data);
 
 
 #endif /* INIT_H_ */

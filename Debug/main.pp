@@ -30,6 +30,9 @@ main.obj: ../data_process.h
 main.obj: C:/ti/StellarisWare/driverlib/timer.h
 main.obj: ../motor_control.h
 main.obj: C:/ti/StellarisWare/driverlib/systick.h
+main.obj: ../my_adc.h
+main.obj: C:/ti/StellarisWare/driverlib/adc.h
+main.obj: C:/ti/StellarisWare/boards/ek-lm3s1968/drivers/rit128x96x4.h
 
 ../main.c: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdio.h: 
@@ -61,3 +64,6 @@ C:/ti/StellarisWare/driverlib/interrupt.h:
 C:/ti/StellarisWare/driverlib/timer.h: 
 ../motor_control.h: 
 C:/ti/StellarisWare/driverlib/systick.h: 
+../my_adc.h: 
+C:/ti/StellarisWare/driverlib/adc.h: 
+C:/ti/StellarisWare/boards/ek-lm3s1968/drivers/rit128x96x4.h: 

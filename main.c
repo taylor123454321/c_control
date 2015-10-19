@@ -29,6 +29,7 @@ Written by Ryan Taylor
 #include "motor_control.h"
 #include "driverlib/systick.h"
 #include "driverlib/timer.h"
+#include "my_adc.h"
 
 //*****************************************************************************
 // Constants
@@ -44,8 +45,11 @@ int encoder_2 = 0;
 int prev_state = 0;
 long time_last_2 = 0;
 bool thing = 0;
+bool select_prev = 0;
 
 static circBuf_t speed_buffer; // Buffer
+cruise_data speed_set_data;
+
 
 int index = 0;
 char UART_char_data[120];
@@ -189,6 +193,21 @@ int read_button_screen(int screen_old, bool fix){
 	return screen;
 }
 
+void select_read(void){
+	int button_data = return_button();
+	bool select = bit_check(button_data, 4);
+	if(select != select_prev && select == 1){
+		if (speed_set_data.enable == 1){
+			speed_set_data.enable = 0;
+		}
+		else{
+			speed_set_data.enable = 1;
+		}
+
+	}
+	select_prev = select;
+}
+
 //void calculate_feedback(void){}
 // calculate_other(long_lat new, long_lat old)
 
@@ -264,7 +283,7 @@ void send_info(int fake_speed){// in knots
 	else {
 		diff = (time_last_2 + MAX_24BIT_VAL) - current_time;
 	}
-	if (diff > 10000000) {
+	if (diff > 2000000) {
 		sprintf(buf, "$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,%d,221.11,160412,,,A*77\n", fake_speed);
 		UARTSend((unsigned char *)buf, 85, 1);
 		time_last_2 = current_time;
@@ -276,6 +295,23 @@ void Timer1IntHandler(void){
 
 }
 
+// This function reads the value from ADC0 and returns it
+unsigned long run_adc(void){
+	uint16_t uiValue = 10;
+	unsigned long ulValue[1];
+	ADCProcessorTrigger(ADC0_BASE, 3);
+	//
+	// Wait for conversion to be completed.
+	while(!ADCIntStatus(ADC0_BASE, 3, false))
+	{
+	}
+	// Read ADC Value.
+	ADCSequenceDataGet(ADC0_BASE, 3, ulValue);
+	uiValue = (unsigned int) ulValue[0];
+
+	return uiValue;
+}
+
 // Main function
 void main(void) {
 	reset_peripheral();
@@ -284,12 +320,14 @@ void main(void) {
 	initDisplay();
 	initPin();
 	initGPIO();
+	initADC();
 	initConsole();
 	int i = 0;
 	//init_password();
 	send_data();
 
 	initCircBuf (&speed_buffer, BUF_SIZE);
+	init_set_speed_data(&speed_set_data);
 
 	int screen = 0;
 	float speed = 0;
@@ -297,7 +335,6 @@ void main(void) {
 	int fake_speed = 0;
 	float acc = 0;
 	float max_acc = 0;
-	int speed_set = 0;
 	//float fuel_eco = 0;
 	float distance = 0;
 
@@ -306,15 +343,8 @@ void main(void) {
 	float quality = 0;
 	clock time;
 	int aim_pos = 0;
-	int error = 0;
-
-	// i = 0;
-	//while(i >= 100){ i++; }
-	//i = 0;
-	//long_lat location = read_location();
-	//while(i >= 100){ i++; }
-	//long_lat location_old = read_location();
-	//i = 0;
+	unsigned long adc = 0;
+	//int error_stepper = 0;
 
 	IntMasterEnable();
 
@@ -322,12 +352,19 @@ void main(void) {
 		//reading data
 		read_data = split_data(UART_char_data_old, read_data); 	// decode data
 		speed = read_speed();									//read data into variables
-		//calculations
-		aim_pos = speed_feedback(buffed_speed, encoder_1/40, speed_set);
-		error = step_motor_control(encoder_1/40, aim_pos);
+		adc = run_adc()/7;
 
-		fake_speed = random_at_most(100/1.852);
+		//calculations
+		aim_pos = speed_feedback(buffed_speed, encoder_1/40, speed_set_data.speed);
+		if (speed_set_data.enable == 1){
+			step_motor_control(encoder_1/40, aim_pos);
+		}
+
+
+		//sending fake data
+		fake_speed = (int)adc;//= random_at_most(100/1.852);
 		send_info(fake_speed);//knots
+
 		//storing data
 		store_speed(speed);
 		buffed_speed = analysis_speed();
@@ -339,15 +376,19 @@ void main(void) {
 		quality = read_quality();
 		debounce_button();										// debounce buttons
 		screen = read_button_screen(screen, fix);
-		if (screen == 1){
-			speed_set = set_speed(speed_set);					// set the speed to cruise at
-		}
-		//calculate_feedback();
 		distance = read_distance();
+		select_read();
+		if (screen == 1){
+			if(init_set_speed() == 0){
+				speed_set_data.speed = buffed_speed;
+			}
+			speed_set_data.speed = set_speed(speed_set_data.speed);					// set the speed to cruise at
+		}
+
 
 		if (i >= 50){
-			display(screen, buffed_speed, acc, max_acc, speed_set, satillite,
-					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos);
+			display(screen, buffed_speed, acc, max_acc, speed_set_data.speed, satillite,
+					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos, adc);
 
 			i = 0;
 		}
