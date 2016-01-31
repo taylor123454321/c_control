@@ -279,6 +279,7 @@ void send_info(int fake_speed){// in knots
 	long current_time = SysTickValueGet();
 	long diff = 0;
 	char buf[90];
+	fake_speed = (int)fake_speed;
 
 	if (current_time <= time_last_2){
 		diff = time_last_2 - current_time;

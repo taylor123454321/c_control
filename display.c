@@ -154,7 +154,7 @@ void display(int screen, float speed, float acc, float max_acc, int speed_set, u
 		sprintf(stringC, "Set speed %d", speed_set);
 		sprintf(stringD, "Satellites %d ", satellite);
 		//sprintf(stringE, "Quality %.2f ", quality);
-		sprintf(stringE, "ADC %d    ", adc);
+		sprintf(stringE, "ADC %d encoder %d   ", adc, encoder);
 		//sprintf(stringF, "  ");
 		sprintf(stringG, "Distance  %.2f   ", distance);
 		RIT128x96x4StringDraw (stringA, 6, 12, 15);
