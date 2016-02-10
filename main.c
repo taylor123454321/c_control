@@ -50,7 +50,6 @@ bool select_prev = 0;
 static circBuf_t speed_buffer; // Buffer
 cruise_data speed_set_data;
 
-
 int index = 0;
 char UART_char_data[120];
 char UART_char_data_old[120];
@@ -59,6 +58,12 @@ char UART_char_data_old[120];
 //float speed_array[5];
 
 bool read_data = 0;
+
+acc_time acc_times; // acceleration testing
+float current_acc_time = 0;
+bool started = 0;
+int refresh_rate = 0;
+float system_timer = 0;
 
 // rate!
 #define PMTK_SET_NMEA_UPDATE_5HZ  "$PMTK220,200*2C\r\n"
@@ -79,12 +84,10 @@ void PinChangeIntHandler (void) {
 	GPIOPinIntClear (GPIO_PORTF_BASE, GPIO_PIN_7);
 	GPIOPinIntClear (GPIO_PORTF_BASE, GPIO_PIN_5);
 
-	// Read the pin
-	ul_A_Val = GPIOPinRead (GPIO_PORTF_BASE, GPIO_PIN_7);
+	ul_A_Val = GPIOPinRead (GPIO_PORTF_BASE, GPIO_PIN_7); // Read the pin
 	ul_B_Val = GPIOPinRead (GPIO_PORTF_BASE, GPIO_PIN_5);
 
-	//Check what state the pins at and assign that state to "current state"
-	if (!ul_A_Val){
+	if (!ul_A_Val){ //Check what state the pins at and assign that state to "current state"
 		if(!ul_B_Val){
 			current_state = 1;
 		}
@@ -172,7 +175,7 @@ int read_button_screen(int screen_old, bool fix){
 
 	bool down = bit_check(button_data, 0);
 	bool up = bit_check(button_data, 1);
-	//bool left = bit_check(button_data, 2);
+	bool left = bit_check(button_data, 2);
 	//bool right = bit_check(button_data, 3);
 	bool select = bit_check(button_data, 4);
 
@@ -183,12 +186,15 @@ int read_button_screen(int screen_old, bool fix){
 		if (select == 1 || (fix == 1 && screen == 4)){// back function
 			screen = 0;
 		}
-		if ((up || down) == 1){ // set speed
+		else if (screen == 0 && left == 1){
+			screen = 2;
+		}
+		else if ((up || down) == 1 && screen == 0){ // set speed
 			screen = 1;
 		}
-		if (screen_old != screen){
-			clearDisplay();
-		}
+	}
+	if (screen_old != screen){
+		clearDisplay();
 	}
 	return screen;
 }
@@ -203,26 +209,22 @@ void select_read(void){
 		else{
 			speed_set_data.enable = 1;
 		}
-
 	}
 	select_prev = select;
 }
 
-//void calculate_feedback(void){}
-// calculate_other(long_lat new, long_lat old)
-
 
 void send_data(void){
 	int i = 0;
-	while(i <= 100000){ i++; }
+	while(i <= 100000){i++;}
 	i = 0;
 	UARTSend((unsigned char *)PMTK_SET_NMEA_UPDATE_5HZ, 18, 0);
 
-	while(i <= 100000){ i++; }
+	while(i <= 100000){i++;}
 	i = 0;
 	UARTSend((unsigned char *)PMTK_SET_NMEA_OUTPUT_RMCGGA, 53,0);
 
-	while(i <= 1000000){ i++; }
+	while(i <= 1000000){i++;}
 	UARTSend((unsigned char *)PGCMD_NOANTENNA, 16,0);
 }
 
@@ -296,7 +298,37 @@ void send_info(int fake_speed){// in knots
 
 void Timer1IntHandler(void){
 	TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+	system_timer += 0.1;
+	speed_set_data.old = speed_set_data.speed;
+	if (started == 1){
+		current_acc_time += 0.1;
+	}
+}
 
+void acceleration_test(float speed){
+	if (speed < 3){
+		current_acc_time = 0;
+		init_acc_time(&acc_times); //reset time
+	}
+	if (speed > 3 && started == 0) {
+		started = 1;
+	}
+	if (speed > 20 && acc_times.acc20 == 0){
+		acc_times.acc20 = current_acc_time;
+	}
+	if (speed > 40 && acc_times.acc40 == 0){
+		acc_times.acc40 = current_acc_time;
+	}
+	if (speed > 60 && acc_times.acc60 == 0){
+		acc_times.acc60 = current_acc_time;
+	}
+	if (speed > 80 && acc_times.acc80 == 0){
+		acc_times.acc80 = current_acc_time;
+	}
+	if (speed > 100 && acc_times.acc100 == 0) {
+		acc_times.acc100 = current_acc_time;
+		started = 0;			 //finished
+	}
 }
 
 // This function reads the value from ADC0 and returns it
@@ -318,38 +350,19 @@ unsigned long run_adc(void){
 
 // Main function
 void main(void) {
-	reset_peripheral();
-	initClock();
-	initTimer();
-	initDisplay();
-	initPin();
-	initGPIO();
-	initADC();
-	initConsole();
-	int i = 0;
+	reset_peripheral(); initClock(); initTimer(); initDisplay(); initPin();
+	initGPIO(); initADC(); initConsole(); int i = 0;
 	//init_password();
 	send_data();
 
-	initCircBuf (&speed_buffer, BUF_SIZE);
-	init_set_speed_data(&speed_set_data);
+	initCircBuf (&speed_buffer, BUF_SIZE); init_set_speed_data(&speed_set_data);
 
-	int screen = 0;
-	int screen_prev = 0;
-	float speed = 0;
-	float buffed_speed = 0;
-	int fake_speed = 0;
-	float acc = 0;
-	float max_acc = 0;
-	//float fuel_eco = 0;
+	int screen = 0; int screen_prev = 0; float speed = 0; float buffed_speed = 0;
+	int fake_speed = 0; float acc = 0; float max_acc = 0; //float fuel_eco = 0;
 	float distance = 0;
 
-	bool fix = 0;
-	uint8_t satillite = 0;
-	float quality = 0;
-	clock time;
-	int aim_pos = 0;
-	unsigned long adc = 0;
-	//int error_stepper = 0;
+	bool fix = 0; uint8_t satillite = 0; float quality = 0; clock time;
+	int aim_pos = 0; unsigned long adc = 0; //int error_stepper = 0;
 
 	IntMasterEnable();
 
@@ -364,7 +377,6 @@ void main(void) {
 		if (speed_set_data.enable == 1){
 			step_motor_control(encoder_1/40, aim_pos);
 		}
-
 
 		//sending fake data
 		fake_speed = (int)adc;//= random_at_most(100/1.852);
@@ -391,12 +403,17 @@ void main(void) {
 			}
 			speed_set_data.speed = set_speed(speed_set_data.speed);					// set the speed to cruise at
 		}
-
-
+		if (screen == 2){ //0 to 100
+			acceleration_test(speed);
+		}
+		// refresh chainging
+		if (fix == 1 && speed_set_data.old == speed_set_data.speed && refresh_rate < 4){
+			UARTSend((unsigned char *)PMTK_SET_NMEA_UPDATE_5HZ, 18, 0);
+			refresh_rate += 1;
+		}
 		if (i >= 50){
 			display(screen, buffed_speed, acc, max_acc, speed_set_data.speed, satillite,
-					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos, adc);
-
+					encoder_1/40, time, distance, quality, UART_char_data_old, aim_pos, adc, acc_times);
 			i = 0;
 		}
 		screen_prev = screen;

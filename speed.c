@@ -37,7 +37,6 @@ float read_speed(void){
 	float speed = 0;
 	speed = get_speed();
 	speed = speed*1.852;
-	speed = roundf(speed);
 	return speed;
 }
 

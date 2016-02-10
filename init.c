@@ -231,7 +231,7 @@ void initTimer(void){
 	TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
 	TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC);
 	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
-	TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet());
+	TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/10);
 	//
 	// Setup the interrupts for the timer timeouts.
 	//
@@ -265,4 +265,16 @@ float * initCircBuf (circBuf_t *buffer, unsigned int size) {
 void init_set_speed_data(cruise_data *data){
 	data->speed = 0;
 	data->enable = 0;
+	data->old = 0;
 }
+
+void init_acc_time(acc_time *data){
+	data->acc20 = 0;
+	data->acc40 = 0;
+	data->acc60 = 0;
+	data->acc80 = 0;
+	data->acc100 = 0;
+}
+
+
+

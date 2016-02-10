@@ -351,7 +351,7 @@ void Timer0IntHandler(void) {
     // Clear the timer interrupt.
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 
-    update_array();
+    //update_array();
     distance += calculate_distance();
     acceleration = calculate_accleration();
     buffed_speed_1_old = buffed_speed;

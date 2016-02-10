@@ -27,8 +27,10 @@ void review_fuel_display(void);
 
 void no_fix_screen(clock time, uint8_t satellite, int encoder, int aim_pos);
 
+void accleration_screen(float speed, float acc, float max_acc, acc_time acc_times);
+
 void display(int screen, float speed, float acc, float max_acc, int speed_set, uint8_t satellite,
-		int encoder_3, clock time, float distance, float quality, char * stuff, int aim_pos, unsigned long adc);
+		int encoder_3, clock time, float distance, float quality, char * stuff, int aim_pos, unsigned long adc, acc_time acc_times);
 
 
 #endif /* DISPLAY_H_ */
