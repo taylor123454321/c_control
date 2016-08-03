@@ -4,22 +4,25 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/arm_5.1.1
+CG_TOOL_ROOT := C:/ti/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS
+
+GEN_OPTS__FLAG := 
+GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-$(GEN_CMDS__FLAG) \
-"./speed.obj" \
-"./rit128x96x4.obj" \
-"./motor_control.obj" \
-"./main.obj" \
-"./lm3s1968_startup_ccs.obj" \
-"./init.obj" \
-"./display.obj" \
-"./debounce.obj" \
 "./data_process.obj" \
+"./debounce.obj" \
+"./display.obj" \
+"./init.obj" \
+"./lm3s1968_startup_ccs.obj" \
+"./main.obj" \
+"./motor_control.obj" \
+"./rit128x96x4.obj" \
+"./speed.obj" \
 "../lm3s1968.cmd" \
--l"libc.a" \
--l"C:\ti\StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib" \
+$(GEN_CMDS__FLAG) \
+-llibc.a \
+-l"C:/ti/StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib" \
 
 -include ../makefile.init
 
@@ -51,17 +54,20 @@ endif
 ifneq ($(strip $(CC_DEPS)),)
 -include $(CC_DEPS)
 endif
+ifneq ($(strip $(SV7A_DEPS)),)
+-include $(SV7A_DEPS)
+endif
 ifneq ($(strip $(S55_DEPS)),)
 -include $(S55_DEPS)
 endif
 ifneq ($(strip $(C67_DEPS)),)
 -include $(C67_DEPS)
 endif
-ifneq ($(strip $(C??_DEPS)),)
--include $(C??_DEPS)
-endif
 ifneq ($(strip $(CLA_DEPS)),)
 -include $(CLA_DEPS)
+endif
+ifneq ($(strip $(C??_DEPS)),)
+-include $(C??_DEPS)
 endif
 ifneq ($(strip $(CPP_DEPS)),)
 -include $(CPP_DEPS)
@@ -90,6 +96,9 @@ endif
 ifneq ($(strip $(C43_DEPS)),)
 -include $(C43_DEPS)
 endif
+ifneq ($(strip $(INO_DEPS)),)
+-include $(INO_DEPS)
+endif
 ifneq ($(strip $(S67_DEPS)),)
 -include $(S67_DEPS)
 endif
@@ -101,6 +110,9 @@ ifneq ($(strip $(S43_DEPS)),)
 endif
 ifneq ($(strip $(OPT_DEPS)),)
 -include $(OPT_DEPS)
+endif
+ifneq ($(strip $(PDE_DEPS)),)
+-include $(PDE_DEPS)
 endif
 ifneq ($(strip $(S64_DEPS)),)
 -include $(S64_DEPS)
@@ -116,32 +128,34 @@ endif
 -include ../makefile.defs
 
 # Add inputs and outputs from these tool invocations to the build variables 
+EXE_OUTPUTS += \
+c_control.out \
+
+EXE_OUTPUTS__QUOTED += \
+"c_control.out" \
+
 
 # All Target
 all: c_control.out
 
-dependents:
-	-cd C:/ti/StellarisWare/driverlib/ccs-cm3/Debug && $(MAKE) all
-
 # Tool invocations
-c_control.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS) C:/ti/StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib
+c_control.out: $(OBJS) $(CMD_SRCS) $(LD_SRCS) $(LIB_SRCS) $(A_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv5/tools/compiler/arm_5.1.1/bin/armcl" -mv7M3 --code_state=16 --abi=eabi -me -g --diag_warning=225 --display_error_number --diag_wrap=off -z -m"c_control.map" -i"C:/ti/ccsv5/tools/compiler/arm_5.1.1/lib" -i"C:/ti/ccsv5/tools/compiler/arm_5.1.1/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="c_control_linkInfo.xml" --rom_model -o "c_control.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/bin/armcl" -mv7M3 --code_state=16 --abi=eabi -me -g --display_error_number --diag_warning=225 --diag_wrap=off -z -m"c_control.map" --heap_size=0x800 --stack_size=0x800 -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="c_control_linkInfo.xml" --rom_model -o "c_control.out" $(ORDERED_OBJS) $(A_SRCS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "c_control.out"
-	-$(RM) "data_process.pp" "debounce.pp" "display.pp" "init.pp" "lm3s1968_startup_ccs.pp" "main.pp" "motor_control.pp" "rit128x96x4.pp" "speed.pp" 
+	-$(RM) $(EXE_OUTPUTS__QUOTED)
+	-$(RM) "data_process.d" "debounce.d" "display.d" "init.d" "lm3s1968_startup_ccs.d" "main.d" "motor_control.d" "rit128x96x4.d" "speed.d" 
 	-$(RM) "data_process.obj" "debounce.obj" "display.obj" "init.obj" "lm3s1968_startup_ccs.obj" "main.obj" "motor_control.obj" "rit128x96x4.obj" "speed.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-C:/ti/StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib:
 
 -include ../makefile.targets
 

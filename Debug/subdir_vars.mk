@@ -29,26 +29,26 @@ OBJS += \
 ./speed.obj 
 
 C_DEPS += \
-./data_process.pp \
-./debounce.pp \
-./display.pp \
-./init.pp \
-./lm3s1968_startup_ccs.pp \
-./main.pp \
-./motor_control.pp \
-./rit128x96x4.pp \
-./speed.pp 
+./data_process.d \
+./debounce.d \
+./display.d \
+./init.d \
+./lm3s1968_startup_ccs.d \
+./main.d \
+./motor_control.d \
+./rit128x96x4.d \
+./speed.d 
 
 C_DEPS__QUOTED += \
-"data_process.pp" \
-"debounce.pp" \
-"display.pp" \
-"init.pp" \
-"lm3s1968_startup_ccs.pp" \
-"main.pp" \
-"motor_control.pp" \
-"rit128x96x4.pp" \
-"speed.pp" 
+"data_process.d" \
+"debounce.d" \
+"display.d" \
+"init.d" \
+"lm3s1968_startup_ccs.d" \
+"main.d" \
+"motor_control.d" \
+"rit128x96x4.d" \
+"speed.d" 
 
 OBJS__QUOTED += \
 "data_process.obj" \

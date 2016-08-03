@@ -3,7 +3,6 @@
 	<name>c_control</name>
 	<comment></comment>
 	<projects>
-		<project>driverlib-cm3</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -30,11 +29,6 @@
 			<name>Stepper.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/Stepper.cpp</locationURI>
-		</link>
-		<link>
-			<name>Stepper.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/Stepper.h</locationURI>
 		</link>
 		<link>
 			<name>gpio.c</name>

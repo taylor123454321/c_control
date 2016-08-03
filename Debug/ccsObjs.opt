@@ -1,1 +1,1 @@
-"./speed.obj" "./rit128x96x4.obj" "./motor_control.obj" "./main.obj" "./lm3s1968_startup_ccs.obj" "./init.obj" "./display.obj" "./debounce.obj" "./data_process.obj" "../lm3s1968.cmd" -l"libc.a" -l"C:\ti\StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib" 
+"./data_process.obj" "./debounce.obj" "./display.obj" "./init.obj" "./lm3s1968_startup_ccs.obj" "./main.obj" "./motor_control.obj" "./rit128x96x4.obj" "./speed.obj" "../lm3s1968.cmd" -llibc.a -l"C:/ti/StellarisWare/driverlib/ccs-cm3/Debug/driverlib-cm3.lib" 
