@@ -34,8 +34,9 @@ Written by Ryan Taylor
 //*****************************************************************************
 // Constants
 //*****************************************************************************
-#define BUF_SIZE 8
 #define MAX_24BIT_VAL 0X0FFFFFF
+#define BUF_SIZE 8
+
 //#define RAND_MAX 300
 
 //GLOBALE VARIABLES
@@ -331,22 +332,7 @@ void acceleration_test(float speed){
 	}
 }
 
-// This function reads the value from ADC0 and returns it
-unsigned long run_adc(void){
-	uint16_t uiValue = 10;
-	unsigned long ulValue[1];
-	ADCProcessorTrigger(ADC0_BASE, 3);
-	//
-	// Wait for conversion to be completed.
-	while(!ADCIntStatus(ADC0_BASE, 3, false))
-	{
-	}
-	// Read ADC Value.
-	ADCSequenceDataGet(ADC0_BASE, 3, ulValue);
-	uiValue = (unsigned int) ulValue[0];
 
-	return uiValue;
-}
 
 // Main function
 void main(void) {

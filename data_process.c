@@ -361,8 +361,6 @@ void Timer0IntHandler(void) {
 
 //Split data up into GGA,GSA,RMC,VTG
 bool split_data(char *data_incoming, bool read_data){
-
-
 	if (strstr(data_incoming, "GGA") != NULL && read_data == 0){
 		decode_GGA(data_incoming);
 		read_data = 1;
